@@ -301,7 +301,7 @@ function ProductList({ onHomeClick }) {
 function ProductCard({item})
 {
     const dispatch = useDispatch()
-    const cart = useSelector(state => state.cartSlice.items)
+    const cart = useSelector(state => state.cart.items)
     const [added, setAdded] = useState(false)
     const handleAddToCart = () => {
         if(!added) {
@@ -321,7 +321,7 @@ function ProductCard({item})
             <img className='product-image' src={item.image} />
             <div className='product-price'>{item.cost}</div>
             <div>{item.description}</div>
-            <button className='product-button' onClick={handleAddToCart}>{added ? "Added To Cart" : "Add To Cart"}</button>
+            <button disabled={added} className='product-button' onClick={handleAddToCart}>{added ? "Added To Cart" : "Add To Cart"}</button>
         </div>
     )
 }
