@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './ProductList.css'
 import CartItem from './CartItem';
+import { useDispatch, useSelector } from 'react-redux';
+import { addItem } from './CartSlice';
 function ProductList({ onHomeClick }) {
     const [showCart, setShowCart] = useState(false);
     const [showPlants, setShowPlants] = useState(false); // State to control the visibility of the About Us page
@@ -274,14 +276,54 @@ function ProductList({ onHomeClick }) {
             </div>
             {!showCart ? (
                 <div className="product-grid">
-
-
+                    {plantsArray.map( ({category, plants}) => (
+                        <div>
+                            <div className='plantname_heading'>
+                                <h2 className='plant_heading'>
+                                    {category}
+                                </h2>
+                            </div>
+                            <div className='product-list'>
+                                {plants.map(plant => (
+                                    <ProductCard item={plant}/>
+                                ))}
+                            </div>
+                        </div>
+                    ) )}
                 </div>
             ) : (
                 <CartItem onContinueShopping={handleContinueShopping} />
             )}
         </div>
     );
+}
+
+function ProductCard({item})
+{
+    const dispatch = useDispatch()
+    const cart = useSelector(state => state.cartSlice.items)
+    const [added, setAdded] = useState(false)
+    const handleAddToCart = () => {
+        if(!added) {
+            dispatch(addItem(item));
+            setAdded(true);
+        }
+    }
+
+    useEffect(() => {
+        const isAdded = cart.find( p => p.name == item.name);
+        if(isAdded) setAdded(true);
+    }, [])
+
+    return (
+        <div className='product-card'>
+            <div className='product-title'>{item.name}</div>
+            <img className='product-image' src={item.image} />
+            <div className='product-price'>{item.cost}</div>
+            <div>{item.description}</div>
+            <button className='product-button' onClick={handleAddToCart}>{added ? "Added To Cart" : "Add To Cart"}</button>
+        </div>
+    )
 }
 
 export default ProductList;
